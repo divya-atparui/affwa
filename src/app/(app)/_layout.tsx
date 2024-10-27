@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unstable-nested-components */
+import Entypo from '@expo/vector-icons/Entypo';
 import { Redirect, SplashScreen, Tabs } from 'expo-router';
 import React, { useCallback, useEffect } from 'react';
 
 import { useAuth, useIsFirstTime } from '@/core';
 import {
-  Feed as FeedIcon,
   Settings as SettingsIcon,
 } from '@/ui/icons';
 
@@ -33,12 +33,24 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Products',
-          tabBarIcon: ({ color }) => <FeedIcon color={color} />,
+          title: 'Home',
+          tabBarIcon: ({ color }) => <Entypo name='home' size={24} color={color} />,
           
           tabBarTestID: 'feed-tab',
         }}
       />
+        <Tabs.Screen
+        name="discover"
+        options={{
+          title: 'Settings',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+          tabBarTestID: 'settings-tab',
+        }}
+      />
+
+      
+      
 
       <Tabs.Screen
         name="settings"
