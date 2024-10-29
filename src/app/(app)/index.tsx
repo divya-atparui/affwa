@@ -5,16 +5,11 @@ import { ScrollView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Swiper from 'react-native-swiper';
 
+import ProductListItems from '@/components/product-list-items';
 import { images } from '@/core';
 import { Image, Text, View } from '@/ui';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  image: string;
-}
+import products from '../../../assets/products.json';
 
 interface Category {
   id: string;
@@ -22,36 +17,6 @@ interface Category {
   icon: keyof typeof MaterialIcons.glyphMap;
 }
 
-const products: Product[] = [
-  {
-    id: '1',
-    name: 'Nike Air Max 270 React',
-    description: "Men's Shoe",
-    price: 'USD 150',
-    image: 'https://example.com/placeholder.png',
-  },
-  {
-    id: '2',
-    name: 'Adidas Classic Leather',
-    description: 'Unisex Originals',
-    price: 'USD 80',
-    image: 'https://example.com/placeholder.png',
-  },
-  {
-    id: '3',
-    name: 'Converse Chuck Taylor',
-    description: 'Unisex High Top',
-    price: 'USD 55',
-    image: 'https://example.com/placeholder.png',
-  },
-  {
-    id: '4',
-    name: 'Vans Old Skool',
-    description: 'Classic Skate Shoe',
-    price: 'USD 60',
-    image: 'https://example.com/placeholder.png',
-  },
-];
 
 const categories: Category[] = [
   { id: '1', name: 'Sneakers', icon: 'directions-run' },
@@ -71,21 +36,6 @@ const carouselItems = [
   },
 ];
 
-const ProductCard = ({ product }: { product: Product }) => (
-  <View className="mb-4 w-[48%]">
-    <Image
-      source={images.exit}
-      className="mb-2 aspect-square w-full rounded-lg"
-      contentFit="cover"
-      transition={1000}
-    />
-
-    <Text className="text-sm font-bold">{product.name}</Text>
-    <Text className="text-xs text-gray-600">{product.description}</Text>
-    <Text className="mt-1 text-sm font-bold">{product.price}</Text>
-  </View>
-);
-
 const CategoryItem = ({ category }: { category: Category }) => (
   <View className="mr-4 items-center">
     <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-gray-200">
@@ -97,11 +47,7 @@ const CategoryItem = ({ category }: { category: Category }) => (
 
 const CarouselItem = ({ item }: { item: (typeof carouselItems)[0] }) => (
   <View className="h-40 w-full overflow-hidden rounded-lg">
-    <Image
-      source={images.exit}
-      className="h-full w-full"
-      contentFit="cover"
-    />
+    <Image source={images.exit} className="h-full w-full" contentFit="cover" />
 
     <View className="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 p-2">
       <Text className="font-bold text-white">{item.title}</Text>
@@ -112,11 +58,11 @@ const CarouselItem = ({ item }: { item: (typeof carouselItems)[0] }) => (
 const ProductList = () => (
   <FlatList
     data={products}
-    renderItem={({ item }) => <ProductCard product={item} />}
-    keyExtractor={(item) => item.id}
+    renderItem={({ item }) => <ProductListItems product={item} />}
+    keyExtractor={(item) => item.name + item.id}
     numColumns={2}
-    columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 16 }}
-    contentContainerStyle={{ paddingBottom: 80 }}
+    contentContainerClassName="gap-2"
+    columnWrapperClassName="gap-2"
   />
 );
 
@@ -131,7 +77,7 @@ export default function Home() {
             ))}
           </Swiper>
         </View>
-     
+
         <View className="mt-6">
           <Text className="mb-4 px-4 text-lg font-bold">Categories</Text>
           <ScrollView
@@ -147,7 +93,7 @@ export default function Home() {
 
         <View className="flex-row items-center justify-between p-4">
           <Text className="text-2xl font-bold">Discover</Text>
-          <Link href="/(app)/discover">
+          <Link href="/product/12">
             <Text className="text-blue-500">View All</Text>
           </Link>
         </View>
