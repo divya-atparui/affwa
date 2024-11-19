@@ -5,17 +5,19 @@ import { ScrollView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Swiper from 'react-native-swiper';
 
+import { useGetProducts } from '@/api/products';
 import ProductListItems from '@/components/product-list-items';
-import { images } from '@/core';
+import {  BASE_URL, images } from '@/core';
+import { type ProductItemType } from '@/types';
 import { Image, Text, View } from '@/ui';
 
-import products from '../../../assets/products.json';
 
 interface Category {
   id: string;
   name: string;
   icon: keyof typeof MaterialIcons.glyphMap;
 }
+
 
 
 const categories: Category[] = [
@@ -49,13 +51,13 @@ const CarouselItem = ({ item }: { item: (typeof carouselItems)[0] }) => (
   <View className="h-40 w-full overflow-hidden rounded-lg">
     <Image source={images.exit} className="h-full w-full" contentFit="cover" />
 
-    <View className="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 p-2">
+    <View className="absolute inset-x-0 bottom-0 bg-black  p-2">
       <Text className="font-bold text-white">{item.title}</Text>
     </View>
   </View>
 );
 
-const ProductList = () => (
+const ProductList = ({ products }: { products: ProductItemType[] }) => (
   <FlatList
     data={products}
     renderItem={({ item }) => <ProductListItems product={item} />}
@@ -67,6 +69,19 @@ const ProductList = () => (
 );
 
 export default function Home() {
+  const { data,  } = useGetProducts();
+
+  console.log(data)
+
+  const productsAffwa = data?.data?.resultList.map((product) => ({ 
+    id: product.productId,
+    name: product.productName,
+    description: product.description,
+    image:  BASE_URL+ product.smallImageUrl ,
+    defaultPrice: product.defaultPrice ,
+  })) ?? [];
+
+
   return (
     <View className="flex-1 ">
       <ScrollView className="flex-1">
@@ -80,24 +95,27 @@ export default function Home() {
 
         <View className="mt-6">
           <Text className="mb-4 px-4 text-lg font-bold">Categories</Text>
-          <ScrollView
+          <View className="px-4">
+
+          <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
-            className="px-4"
-          >
-            {categories.map((category) => (
-              <CategoryItem key={category.id} category={category} />
-            ))}
-          </ScrollView>
+            data={categories}
+            keyExtractor={(category) => category.id}
+            renderItem={({ item: category }) => (
+              <CategoryItem category={category} />
+            )}
+          />
+          </View>
         </View>
 
         <View className="flex-row items-center justify-between p-4">
           <Text className="text-2xl font-bold">Discover</Text>
-          <Link href="/product/12">
+          <Link href="/products">
             <Text className="text-blue-500">View All</Text>
           </Link>
         </View>
-        <ProductList />
+        <ProductList products={productsAffwa} />
       </ScrollView>
     </View>
   );

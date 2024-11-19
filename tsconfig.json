@@ -8,7 +8,8 @@
       "@env": ["./src/core/env.js"]
     },
     "esModuleInterop": true,
-    "checkJs": true
+    "checkJs": true,
+    "jsx": "react-jsx" // Add this line
   },
   "exclude": [
     "node_modules",

@@ -1,81 +1,64 @@
-import { Image } from 'expo-image';
-import { Link } from 'expo-router';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import React from 'react';
-import { FlatList, } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity,View } from 'react-native';
 
-import {Text, View } from '@/ui';
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  image: string;
-}
+import { useCart } from '@/core';
+import { type CartItem } from '@/types';
 
-const products: Product[] = [
-  {
-    id: '1',
-    name: 'Nike Air Max 270 React',
-    description: "Men's Shoe",
-    price: 'INR 150',
-    image: 'https://example.com/placeholder.png',
-  },
-  {
-    id: '2',
-    name: 'Adidas Classic Leather',
-    description: 'Unisex Originals',
-    price: 'INR 80',
-    image: 'https://example.com/placeholder.png',
-  },
-  {
-    id: '3',
-    name: 'Converse Chuck Taylor',
-    description: 'Unisex High Top',
-    price: 'INR 55',
-    image: 'https://example.com/placeholder.png',
-  },
-  {
-    id: '4',
-    name: 'Vans Old Skool',
-    description: 'Classic Skate Shoe',
-    price: 'INR 60',
-    image: 'https://example.com/placeholder.png',
-  },
-];
+export default function Cart() {
+  const { items, updateQuantity, removeItem } = useCart();
 
-const ProductCard = ({ product }: { product: Product }) => (
-  <View className="mb-4 w-[48%]">
-    <Image
-      source={{ uri: product.image }}
-      className="mb-2 aspect-square w-full rounded-lg"
-      contentFit="cover"
-      transition={1000}
-    />
-    <Text className="text-sm font-bold">{product.name}</Text>
-    <Text className="text-xs text-gray-600">{product.description}</Text>
-    <Text className="mt-1 text-sm font-bold">{product.price}</Text>
-  </View>
-);
+  const total = items.reduce((sum, item) => sum + item.product.defaultPrice * item.quantity, 0);
 
-const DiscoverScreen = () => {
-  return (
-    <View className="flex-1">
-      <View className="flex-row items-center justify-between p-4">
-        <Text className="text-2xl font-bold">Discover</Text>
-        <Link href="/(app)/discover">
-          <Text className="text-blue-500">View All</Text>
-        </Link>
-      </View>
-      <FlatList
-        data={products}
-        renderItem={({ item }) => <ProductCard product={item} />}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 16 }}
-        contentContainerStyle={{ paddingBottom: 80 }}
+  const renderCartItem = (item: CartItem) => (
+
+    <View key={item.product.productId} className="mx-4 mb-2 mt-4 flex-row items-center rounded-lg bg-white p-4">
+      <Image
+        source={{ uri: item.product.smallImageUrl }}
+        className="h-20 w-20 rounded-md"
       />
+      <View className="ml-4 flex-1">
+        <Text className="text-lg font-semibold">{item.product.productName}</Text>
+        <Text className="text-gray-600">Rs.{item.product.defaultPrice.toFixed(2)}</Text>
+        <View className="mt-2 flex-row items-center">
+          <TouchableOpacity
+            onPress={() => updateQuantity(item.product.productId, item.quantity - 1)}
+            className="rounded-full bg-gray-200 p-2"
+          >
+            <AntDesign name="minus" size={16} color="#4B5563" />
+          </TouchableOpacity>
+          <Text className="mx-4 text-lg">{item.quantity}</Text>
+          <TouchableOpacity
+            onPress={() => updateQuantity(item.product.productId, item.quantity + 1)}
+            className="rounded-full bg-gray-200 p-2"
+          >
+            <AntDesign name="plus" size={16} color="#4B5563" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => removeItem(item.product.productId)}
+            className="ml-auto rounded-full bg-red-500 p-2"
+          >
+            <AntDesign name="delete" size={16} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
-};
 
-export default DiscoverScreen;
+  return (
+    
+    <View className="mt-10 flex-1 bg-gray-100">
+
+      <ScrollView className="flex-1">
+        {items.map(renderCartItem)}
+      </ScrollView>
+
+      <View className="bg-white p-4 shadow-lg">
+        <Text className="mb-2 text-xl font-bold">Total: Rs.{total.toFixed(2)}</Text>
+        <TouchableOpacity className="rounded-lg bg-blue-500 p-4">
+          <Text className="text-center text-lg font-semibold text-white">Checkout</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}

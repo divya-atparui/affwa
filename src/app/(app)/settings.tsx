@@ -3,7 +3,6 @@ import { Env } from '@env';
 
 import { Item } from '@/components/settings/item';
 import { ItemsContainer } from '@/components/settings/items-container';
-import { ThemeItem } from '@/components/settings/theme-item';
 import { translate, useAuth } from '@/core';
 import {  FocusAwareStatusBar, ScrollView, Text, View } from '@/ui';
 
@@ -20,9 +19,7 @@ export default function Settings() {
           <Text className="text-xl font-bold">
             {translate('settings.title')}
           </Text>
-          <ItemsContainer title="settings.generale">
-            <ThemeItem />
-          </ItemsContainer>
+
 
           <ItemsContainer title="settings.about">
             <Item text="settings.app_name" value={Env.NAME} />
